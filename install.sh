@@ -16,13 +16,13 @@ print_message() {
 
 source ./header.sh
 
-read -p "enter your database user (default: mmuser): " dbuser
+read -p "Enter your database user (default: mmuser): " dbuser
 dbuser=${dbuser:-mmuser}
-read -p "enter your database password (default: mmuser_password): " dbpass
+read -p "Enter your database password (default: mmuser_password): " dbpass
 dbpass=${dbpass:-mmuser_password}
-read -p "enter your database name (default: mattermost): " dbname
+read -p "Enter your database name (default: mattermost): " dbname
 dbname=${dbname:-mattermost}
-read -p "enter your domain name (example.com): " domain
+read -p "Enter your domain name (example.com): " domain
 
 print_message "Installing postgreSQL..."
 # check if postgreSQL is installed
@@ -42,24 +42,59 @@ else
   sudo apt update
   sudo apt install nginx -y
   
+  print_message "Enabling firewall and openning ports 80 and 443..."
   sudo ufw allow 'Nginx HTTP'
   sudo ufw allow 'Nginx HTTPS'
   sudo ufw allow 22/tcp 
   sudo ufw enable
 fi
 
-print_message "Installing mattermost..." "getting version 7.4 binary file..."
+# check if mattermost is installed
+if [[ -d "/opt/mattermost" ]]; then
+  print_message "Removing previously istalled Mattermost server..."
+  read -p "Do you want to remove the previously installed Mattermost? (y/n): " remove
+
+  if [[ "$remove" == [yY] || "$remove" == [yY][eE][sS] ]]; then
+    sudo systemctl stop mattermost.service
+    sudo systemctl disable mattermost.service
+    [[ -d /opt/mattermost ]] && sudo rm -rf /opt/mattermost
+    [[ -d /var/log/mattermost ]] && sudo rm -rf /var/log/mattermost
+    [[ -d /var/mattermost ]] && sudo rm -rf /var/mattermost
+    [[ -d /etc/mattermost ]] && sudo rm -rf /etc/mattermost
+    [[ -d /etc/systemd/system/mattermost.service ]] && sudo rm -rf /etc/systemd/system/mattermost.service
+    sudo rm -rf /etc/systemd/system/mattermost.service
+    # remove nginx config 
+    sudo rm -rf /etc/nginx/sites-available/mattermost.conf
+    sudo rm -rf /etc/nginx/sites-enabled/mattermost.conf
+    sudo systemctl restart nginx
+  else
+    print_message "Mattermost is already installed!"
+    exit 1
+  fi
+fi
+
+
+print_message "Installing mattermost..."
+
+read -p "Which mattermost version do you want to install? (default: 7.4.0): " version
+
+print_message "getting version $version binary file..."
 cd ~
-wget https://releases.mattermost.com/7.4.0/mattermost-7.4.0-linux-amd64.tar.gz
+wget https://releases.mattermost.com/$version/mattermost-$version-linux-amd64.tar.gz
 print_message "extracting..."
 tar -xvzf mattermost*.gz
 sudo cp -r mattermost /opt
 sudo mkdir /opt/mattermost/data
+
 print_message "creating mattermost user group and assigning permissions..."
-sudo useradd --system --user-group mattermost
+# check if mattermost user exists
+if id -u mattermost >/dev/null 2>&1; then
+  echo "Mattermost user already exists!"
+else
+  sudo useradd --system --user-group mattermost
+fi
 sudo chown -R mattermost:mattermost /opt/mattermost
 sudo chmod -R g+w /opt/mattermost
-
 
 print_message "setting up database..." 
 sudo -i -u postgres -H -- psql -c "CREATE DATABASE $dbname;"
