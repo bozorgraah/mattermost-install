@@ -14,6 +14,8 @@ print_message() {
   echo -e ""
 }
 
+source ./header.sh
+
 read -p "enter your database user (default: mmuser): " dbuser
 dbuser=${dbuser:-mmuser}
 read -p "enter your database password (default: mmuser_password): " dbpass
