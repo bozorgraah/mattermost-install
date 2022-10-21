@@ -46,7 +46,9 @@ sudo chown -R mattermost:mattermost /opt/mattermost
 sudo chmod -R g+w /opt/mattermost
 
 print_message "setting up database..." 
+sudo -i -u postgres -H -- psql -c "DROP DATABASE IF EXISTS $dbname;"
 sudo -i -u postgres -H -- psql -c "CREATE DATABASE $dbname;"
+sudo -i -u postgres -H -- psql -c "DROP USER IF EXISTS $dbuser;"
 sudo -i -u postgres -H -- psql -c "CREATE USER $dbuser WITH PASSWORD '$dbpass';"
 sudo -i -u postgres -H -- psql -c "GRANT ALL PRIVILEGES ON DATABASE $dbname TO $dbuser;"
 

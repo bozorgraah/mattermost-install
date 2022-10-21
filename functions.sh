@@ -51,18 +51,19 @@ remove_mattermost() {
   read -p "Do you want to remove the previously installed Mattermost? (y/n): " remove
 
   if [[ "$remove" == [yY] || "$remove" == [yY][eE][sS] ]]; then
-    sudo systemctl stop mattermost.service
-    sudo systemctl disable mattermost.service
+    [[ -f /etc/nginx/sites-available/mattermost.conf ]] && sudo rm /etc/nginx/sites-available/mattermost.conf
+    [[ -f /etc/nginx/sites-enabled/mattermost.conf ]] && sudo rm /etc/nginx/sites-enabled/mattermost.conf
+    sudo systemctl reload nginx
+    if [ -f /etc/systemd/system/mattermost.service ]; then
+      sudo systemctl stop mattermost.service
+      sudo systemctl disable mattermost.service
+    fi
     [[ -d /opt/mattermost ]] && sudo rm -rf /opt/mattermost
     [[ -d /var/log/mattermost ]] && sudo rm -rf /var/log/mattermost
     [[ -d /var/mattermost ]] && sudo rm -rf /var/mattermost
     [[ -d /etc/mattermost ]] && sudo rm -rf /etc/mattermost
-    [[ -d /etc/systemd/system/mattermost.service ]] && sudo rm -rf /etc/systemd/system/mattermost.service
-    sudo rm -rf /etc/systemd/system/mattermost.service
+    [[ -f /etc/systemd/system/mattermost.service ]] && sudo rm /etc/systemd/system/mattermost.service
     # remove nginx config 
-    sudo rm -rf /etc/nginx/sites-available/mattermost.conf
-    sudo rm -rf /etc/nginx/sites-enabled/mattermost.conf
-    sudo systemctl restart nginx
   else
     print_message "Mattermost is already installed!"
     exit 1
@@ -88,7 +89,7 @@ config_mattermost_service() {
   LimitNOFILE=49152
 
   [Install]
-  WantedBy=$1.service" > /etc/systemd/system/mattermost.service
+  WantedBy=$1.service" | sudo tee /etc/systemd/system/mattermost.service > /dev/null
 
   sudo systemctl daemon-reload
   sudo systemctl enable mattermost
@@ -146,7 +147,7 @@ config_mattermost_nginx() {
          proxy_http_version 1.1;
          proxy_pass http://backend;
      }
-  }" > /etc/nginx/sites-available/mattermost.conf
+  }" | sudo tee /etc/nginx/sites-available/mattermost.conf > /dev/null
 
   if [[ -f /etc/nginx/sites-enabled/mattermost.conf ]]; then
     sudo rm -rf /etc/nginx/sites-enabled/mattermost.conf
