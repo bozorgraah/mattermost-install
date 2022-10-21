@@ -15,5 +15,13 @@ git clone https://github.com/m-salehi-v/mattermost
 cd mattermost
 bash install.sh
 ```
+if you have problem cloning the git repository download the zip file and extract it using unzip package:
+```sh
+sudo apt install unzip
+wget https://github.com/m-salehi-v/mattermost/archive/refs/heads/main.zip
+unzip main.zip
+cd mattermost-main
+bash install.sh
+```
 First you have to answer some simple question and the script will do the rest.
 Also if you want SSL certificate you need to answer certbot questions at the end of the script.
