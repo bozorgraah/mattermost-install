@@ -52,11 +52,11 @@ sudo -i -u postgres -H -- psql -c "GRANT ALL PRIVILEGES ON DATABASE $dbname TO $
 
 print_message "configuring mattermost..."
 # config postgres database
-sed -i -e 's~"DataSource": ".*"~"DataSource": "postgres://'"$dbuser"':'"$dbpass"'@localhost:5432/'"$dbname"'?sslmode=disable\&connect_timeout=10\&binary_parameters=yes"~g' /opt/mattermost/config/config.json
+sudo sed -i -e 's~"DataSource": ".*"~"DataSource": "postgres://'"$dbuser"':'"$dbpass"'@localhost:5432/'"$dbname"'?sslmode=disable\&connect_timeout=10\&binary_parameters=yes"~g' /opt/mattermost/config/config.json
 # enable plugin uploads
-sed -i 's~"EnableUploads": false~"EnableUploads": true~g' /opt/mattermost/config/config.json
+sudo sed -i 's~"EnableUploads": false~"EnableUploads": true~g' /opt/mattermost/config/config.json
 # enter site url
-sed -i 's~"SiteURL": ""~"SiteURL": "https:\/\/'"$domain"'"~g' /opt/mattermost/config/config.json
+sudo sed -i 's~"SiteURL": ""~"SiteURL": "https:\/\/'"$domain"'"~g' /opt/mattermost/config/config.json
 
 # create systemd service
 config_mattermost_service "postgresql"
