@@ -15,7 +15,7 @@ git clone https://github.com/bozorgraah/mattermost-install.git
 cd mattermost-install
 bash install.sh
 ```
-if you have problem cloning the git repository download the zip file and extract it using unzip package:
+if you have problem cloning the git repository download the tar.gz file and extract it using tar package:
 ```sh
 wget -c https://github.com/bozorgraah/mattermost-install/archive/refs/heads/main.tar.gz -O - | tar -xz
 cd mattermost-install-main
