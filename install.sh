@@ -5,20 +5,35 @@ set -o pipefail
 source ./header.sh
 source ./functions.sh
 
-read -p "Which mattermost version do you want to install? (default: 7.4.0): " version
-version=${version:-7.4.0}
-validate_version $version
-read -p "Enter your database user (default: mmuser): " dbuser
-dbuser=${dbuser:-mmuser}
-validate_alphanum $dbuser
-read -p "Enter your database password. only alphanum and underscore allowed (default: mmuser_password): " dbpass
-dbpass=${dbpass:-mmuser_password}
-validate_password $dbpass
-read -p "Enter your database name (default: mattermost): " dbname
-dbname=${dbname:-mattermost}
-validate_alphanum $dbname
-read -p "Enter your domain name. Enter IP if you don't have a domain name (e.g. example.com or 10.10.10.10): " domain
-validate_domain $domain
+# get input while not valid
+while : ; do
+  read -p "Which mattermost version do you want to install? (default: 7.4.0): " version
+  version=${version:-7.4.0}
+  validate_version $version && break
+done
+
+while : ; do
+  read -p "Enter your database user (default: mmuser): " dbuser
+  dbuser=${dbuser:-mmuser}
+  validate_alphanum $dbuser && break
+done
+
+while : ; do
+  read -p "Enter your database password. only alphanum and underscore allowed (default: mmuser_password): " dbpass
+  dbpass=${dbpass:-mmuser_password}
+  validate_password $dbpass && break
+done
+
+while : ; do
+  read -p "Enter your database name (default: mattermost): " dbname
+  dbname=${dbname:-mattermost}
+  validate_alphanum $dbname && break
+done
+
+while : ; do
+  read -p "Enter your domain name. Enter IP if you don't have a domain name (e.g. example.com or 10.10.10.10): " domain
+  validate_domain $domain && break
+done
 
 print_message "Installing postgreSQL..."
 install_postgresql

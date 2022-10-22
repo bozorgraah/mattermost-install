@@ -165,35 +165,30 @@ is_ip() {
 }
 
 validate_version() {
-  if ! [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    echo "Invalid version"
-    exit 1
+  if ! [[ $# -gt 0 && "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "Invalid version. Please try again."
+    return 1
   fi
 }
 
 validate_domain() {
-  # check if domain is set
-  if [[ $# -eq 0 ]]; then
-    echo "Domain is not set"
-    exit 1
-  fi
-  if ! [[ "$1" =~ ^[a-zA-Z0-9]+([\-\.]{1}[a-zA-Z0-9]+)*\.[a-zA-Z]{2,5}$ || "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    echo "Invalid domain"
-    exit 1
+  if ! [[ $# -gt 0 && ( "$1" =~ ^[a-zA-Z0-9]+([\-\.]{1}[a-zA-Z0-9]+)*\.[a-zA-Z]{2,5}$ || "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ) ]]; then
+    echo "Invalid domain. Please try again."
+    return 1
   fi
 }
 
 validate_alphanum() {
-  if ! [[ "$1" =~ ^[a-zA-Z0-9]+$ ]]; then
-    echo "Invalid value"
-    exit 1
+  if ! [[ $# -gt 0 && "$1" =~ ^[a-zA-Z0-9]+$ ]]; then
+    echo "Invalid value. Please try again." 
+    return 1
   fi
 }
 
 validate_password() {
-  if ! [[ "$1" =~ ^[a-zA-Z0-9_]+$ ]]; then
-    echo "Invalid password"
-    exit 1
+  if ! [[ $# -gt 0 && "$1" =~ ^[a-zA-Z0-9_]+$ ]]; then
+    echo "Invalid password. Please try again."
+    return 1
   fi
 }
 
