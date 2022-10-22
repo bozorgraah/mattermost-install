@@ -11,16 +11,14 @@ I used PostgreSQL as the database and Nginx as the web server through this scrip
 ## Usage
 In order to use this script simply clone this repository and run the install script:
 ```sh
-git clone https://github.com/m-salehi-v/mattermost
-cd mattermost
+git clone https://github.com/bozorgraah/mattermost-install.git
+cd mattermost-install
 bash install.sh
 ```
 if you have problem cloning the git repository download the zip file and extract it using unzip package:
 ```sh
-sudo apt install unzip
-wget https://github.com/m-salehi-v/mattermost/archive/refs/heads/main.zip
-unzip main.zip
-cd mattermost-main
+wget -c https://github.com/bozorgraah/mattermost-install/archive/refs/heads/main.tar.gz -O - | tar -xz
+cd mattermost-install-main
 bash install.sh
 ```
 First you have to answer some simple question and the script will do the rest.
