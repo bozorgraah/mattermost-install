@@ -7,13 +7,18 @@ source ./functions.sh
 
 read -p "Which mattermost version do you want to install? (default: 7.4.0): " version
 version=${version:-7.4.0}
+validate_version $version
 read -p "Enter your database user (default: mmuser): " dbuser
 dbuser=${dbuser:-mmuser}
-read -p "Enter your database password (default: mmuser_password): " dbpass
+validate_alphanum $dbuser
+read -p "Enter your database password. only alphanum and underscore allowed (default: mmuser_password): " dbpass
 dbpass=${dbpass:-mmuser_password}
+validate_password $dbpass
 read -p "Enter your database name (default: mattermost): " dbname
 dbname=${dbname:-mattermost}
+validate_alphanum $dbname
 read -p "Enter your domain name (example.com): " domain
+validate_domain $domain
 
 print_message "Installing postgreSQL..."
 install_postgresql
