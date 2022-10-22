@@ -89,6 +89,7 @@ config_mattermost_nginx "$domain"
 
 print_message "restarting nginx..."
 sudo systemctl restart nginx
+echo "nginx restarted!"
 
 if ! is_ip "$domain"; then
   read -p "Do you want to enable SSL (https)? (y/n) (default: y): " enable_ssl
@@ -101,7 +102,7 @@ if ! is_ip "$domain"; then
   fi
 fi
 
-print_message "starting mattermost..."
+print_message "starting mattermost..." "this may take a while... up to several minutes..."
 sudo systemctl start mattermost
 
 echo "##################################################################"
