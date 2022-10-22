@@ -55,10 +55,8 @@ remove_mattermost() {
       sudo systemctl stop mattermost.service
       sudo systemctl disable mattermost.service
     fi
-    sudo systemctl stop nginx
-    [[ -f /etc/nginx/sites-available/mattermost.conf ]] && sudo rm /etc/nginx/sites-available/mattermost.conf
     [[ -f /etc/nginx/sites-enabled/mattermost.conf ]] && sudo rm /etc/nginx/sites-enabled/mattermost.conf
-    sudo systemctl start nginx
+    sudo systemctl reload nginx
     [[ -d /opt/mattermost ]] && sudo rm -rf /opt/mattermost
     [[ -d /var/log/mattermost ]] && sudo rm -rf /var/log/mattermost
     [[ -d /var/mattermost ]] && sudo rm -rf /var/mattermost
