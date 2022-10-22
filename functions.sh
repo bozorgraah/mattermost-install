@@ -48,6 +48,7 @@ install_certbot() {
 
 remove_mattermost() {
   print_message "Removing previously istalled Mattermost server..."
+  echo "WARNING: This will remove all your previous data!"
   read -p "Do you want to remove the previously installed Mattermost? (y/n): " remove
 
   if [[ "$remove" == [yY] || "$remove" == [yY][eE][sS] ]]; then

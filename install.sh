@@ -51,6 +51,7 @@ sudo chown -R mattermost:mattermost /opt/mattermost
 sudo chmod -R g+w /opt/mattermost
 
 print_message "setting up database..." 
+echo "if you get an error here, please resolve it manually and run the script again."
 sudo -i -u postgres -H -- psql -c "DROP DATABASE IF EXISTS $dbname;"
 sudo -i -u postgres -H -- psql -c "CREATE DATABASE $dbname;"
 sudo -i -u postgres -H -- psql -c "DROP USER IF EXISTS $dbuser;"
