@@ -157,6 +157,14 @@ config_mattermost_nginx() {
   sudo nginx -t
 }
 
+is_ip() {
+  if [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 validate_version() {
   if ! [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "Invalid version"
@@ -170,7 +178,7 @@ validate_domain() {
     echo "Domain is not set"
     exit 1
   fi
-  if ! [[ "$1" =~ ^[a-zA-Z0-9]+([\-\.]{1}[a-zA-Z0-9]+)*\.[a-zA-Z]{2,5}$ ]]; then
+  if ! [[ "$1" =~ ^[a-zA-Z0-9]+([\-\.]{1}[a-zA-Z0-9]+)*\.[a-zA-Z]{2,5}$ || "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "Invalid domain"
     exit 1
   fi

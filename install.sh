@@ -17,7 +17,7 @@ validate_password $dbpass
 read -p "Enter your database name (default: mattermost): " dbname
 dbname=${dbname:-mattermost}
 validate_alphanum $dbname
-read -p "Enter your domain name (example.com): " domain
+read -p "Enter your domain name. Enter IP if you don't have a domain name (e.g. example.com or 10.10.10.10): " domain
 validate_domain $domain
 
 print_message "Installing postgreSQL..."
@@ -63,7 +63,7 @@ sudo sed -i -e 's~"DataSource": ".*"~"DataSource": "postgres://'"$dbuser"':'"$db
 # enable plugin uploads
 sudo sed -i 's~"EnableUploads": false~"EnableUploads": true~g' /opt/mattermost/config/config.json
 # enter site url
-sudo sed -i 's~"SiteURL": ""~"SiteURL": "https:\/\/'"$domain"'"~g' /opt/mattermost/config/config.json
+sudo sed -i 's~"SiteURL": ""~"SiteURL": "http:\/\/'"$domain"'"~g' /opt/mattermost/config/config.json
 
 # create systemd service
 config_mattermost_service "postgresql"
@@ -71,16 +71,22 @@ config_mattermost_service "postgresql"
 print_message "creating nginx config file..."
 config_mattermost_nginx "$domain"
 
-print_message "restarting nginx and starting mattermost service..."
+print_message "restarting nginx..."
 sudo systemctl restart nginx
+
+if ! is_ip "$domain"; then
+  read -p "Do you want to enable SSL (https)? (y/n) (default: y): " enable_ssl
+  enable_ssl=${enable_ssl:-y}
+  if [[ $enable_ssl == [yY] || $enable_ssl == [yY][eE][sS] ]]; then
+    print_message "securing your domain..." "installing certbot..."
+    install_certbot
+    sudo certbot --nginx -d $domain
+    sudo sed -i 's~http:\/\/'"$domain"'~https:\/\/'"$domain"'~g' /opt/mattermost/config/config.json
+  fi
+fi
+
+print_message "starting mattermost..."
 sudo systemctl start mattermost
-
-print_message "securing your domain..." "installing certbot..."
-install_certbot
-sudo certbot --nginx -d $domain
-
-print_message "restarting mattermost..."
-sudo systemctl restart mattermost
 
 echo "##################################################################"
 echo "##################################################################"
