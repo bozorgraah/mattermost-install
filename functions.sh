@@ -51,19 +51,19 @@ remove_mattermost() {
   read -p "Do you want to remove the previously installed Mattermost? (y/n): " remove
 
   if [[ "$remove" == [yY] || "$remove" == [yY][eE][sS] ]]; then
-    [[ -f /etc/nginx/sites-available/mattermost.conf ]] && sudo rm /etc/nginx/sites-available/mattermost.conf
-    [[ -f /etc/nginx/sites-enabled/mattermost.conf ]] && sudo rm /etc/nginx/sites-enabled/mattermost.conf
-    sudo systemctl reload nginx
     if [ -f /etc/systemd/system/mattermost.service ]; then
       sudo systemctl stop mattermost.service
       sudo systemctl disable mattermost.service
     fi
+    sudo systemctl stop nginx
+    [[ -f /etc/nginx/sites-available/mattermost.conf ]] && sudo rm /etc/nginx/sites-available/mattermost.conf
+    [[ -f /etc/nginx/sites-enabled/mattermost.conf ]] && sudo rm /etc/nginx/sites-enabled/mattermost.conf
+    sudo systemctl start nginx
     [[ -d /opt/mattermost ]] && sudo rm -rf /opt/mattermost
     [[ -d /var/log/mattermost ]] && sudo rm -rf /var/log/mattermost
     [[ -d /var/mattermost ]] && sudo rm -rf /var/mattermost
     [[ -d /etc/mattermost ]] && sudo rm -rf /etc/mattermost
     [[ -f /etc/systemd/system/mattermost.service ]] && sudo rm /etc/systemd/system/mattermost.service
-    # remove nginx config 
   else
     print_message "Mattermost is already installed!"
     exit 1
