@@ -48,7 +48,17 @@ fi
 
 print_message "Installing mattermost..." "getting version $version binary file..."
 cd ~
-wget https://releases.mattermost.com/$version/mattermost-$version-linux-amd64.tar.gz
+# check if file exists
+if [[ -f "mattermost-$version-linux-amd64.tar.gz" ]]; then
+  echo "File already exists."
+  read -p "Do you want to remove the file and download again? (y/n) " dl_again
+  if [[ $dl_again == [yY] || $dl_again == [yY][eE][sS] ]]; then
+    rm mattermost-$version-linux-amd64.tar.gz
+    wget https://releases.mattermost.com/$version/mattermost-$version-linux-amd64.tar.gz
+  fi
+else
+  wget https://releases.mattermost.com/$version/mattermost-$version-linux-amd64.tar.gz
+fi
 
 print_message "extracting..."
 tar -xvzf mattermost*.gz
